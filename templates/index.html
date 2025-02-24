@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Frais Sociétés</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #C3C7BF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #333;
+        }
+
+        p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        select, button, input[type="checkbox"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #5A5F52;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #444841;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: #777;
+            margin-top: 15px;
+        }
+
+        .result p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .result hr {
+            margin: 10px 0;
+            border: 0.5px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulateur de Frais Sociétés</h1>
+        <p>Bienvenue sur le simulateur de frais afin d'aider à anticiper les frais liés aux créations, modifications, etc., des sociétés.</p>
+
+        <form method="POST">
+            <label for="operation">Opération :</label>
+            <select name="operation" id="operation">
+                <option value="Immatriculation avec activité" {% if operation=="Immatriculation avec activité" %}selected{% endif %}>Immatriculation avec activité</option>
+                <option value="Immatriculation sans activité" {% if operation=="Immatriculation sans activité" %}selected{% endif %}>Immatriculation sans activité</option>
+                <option value="Transfert de siège (même département)" {% if operation=="Transfert de siège (même département)" %}selected{% endif %}>Transfert de siège (même département)</option>
+                <option value="Transfert de siège (hors département)" {% if operation=="Transfert de siège (hors département)" %}selected{% endif %}>Transfert de siège (hors département)</option>
+                <option value="Changement de dirigeant" {% if operation=="Changement de dirigeant" %}selected{% endif %}>Changement de dirigeant</option>
+                <option value="Modification du capital social" {% if operation=="Modification du capital social" %}selected{% endif %}>Modification du capital social</option>
+                <option value="Modification de l’objet social" {% if operation=="Modification de l’objet social" %}selected{% endif %}>Modification de l’objet social</option>
+                <option value="Changement de dénomination" {% if operation=="Changement de dénomination" %}selected{% endif %}>Changement de dénomination</option>
+                <option value="Mise en activité" {% if operation=="Mise en activité" %}selected{% endif %}>Mise en activité</option>
+                <option value="Transformation" {% if operation=="Transformation" %}selected{% endif %}>Transformation</option>
+                <option value="Dissolution" {% if operation=="Dissolution" %}selected{% endif %}>Dissolution</option>
+                <option value="Radiation un établissement" {% if operation=="Radiation un établissement" %}selected{% endif %}>Radiation un établissement</option>
+                <option value="Dépot des comptes" {% if operation=="Dépot des comptes" %}selected{% endif %}>Dépôt des comptes</option>
+                <option value="Modifications multiples" {% if operation=="Modifications multiples" %}selected{% endif %}>Modifications multiples</option>
+            </select>
+
+            <label for="forme_juridique">Forme juridique :</label>
+            <select name="forme_juridique" id="forme_juridique">
+                <option value="" {% if not forme_juridique %}selected{% endif %}>Non applicable</option>
+                <option value="SA" {% if forme_juridique=="SA" %}selected{% endif %}>SA</option>
+                <option value="SAS" {% if forme_juridique=="SAS" %}selected{% endif %}>SAS</option>
+                <option value="SASU" {% if forme_juridique=="SASU" %}selected{% endif %}>SASU</option>
+                <option value="SARL" {% if forme_juridique=="SARL" %}selected{% endif %}>SARL</option>
+                <option value="EURL" {% if forme_juridique=="EURL" %}selected{% endif %}>EURL</option>
+                <option value="SNC" {% if forme_juridique=="SNC" %}selected{% endif %}>SNC</option>
+                <option value="SCI" {% if forme_juridique=="SCI" %}selected{% endif %}>SCI</option>
+            </select>
+
+            <label>
+                <input type="checkbox" name="associe_unique" {% if associe_unique %}checked{% endif %}>
+                Associé unique dirigeant (SASU / EURL)
+            </label>
+
+            <label>
+                <input type="checkbox" name="modifie_beneficiaires" {% if modifie_beneficiaires %}checked{% endif %}>
+                Cette formalité modifie les bénéficiaires effectifs (+35,58 €)
+            </label>
+
+            <button type="submit">Calculer</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h2>Résultat :</h2>
+            <p><strong>Frais de greffe :</strong> {{ result.greffe_ttc }} €</p>
+            <p><strong>Frais INPI :</strong> {{ result.frais_inpi_ttc }} €</p>
+            <hr>
+            <p><strong>Total Frais :</strong> {{ result.total_frais }} €</p>
+            <br>
+            <p><strong>Frais d'annonce légale :</strong> {{ result.annonce_ttc }} €</p>
+            <hr>
+           <p><strong>Total Général :</strong> {{ result.total_general }} €</p>
+         </div>
+
+        {% endif %}
+
+        <p class="disclaimer">
+            ⚠️ Les montants affichés sont donnés à titre indicatif et peuvent contenir une marge d'erreur. Nous vous conseillons de vérifier auprès des services compétents pour des tarifs officiels. Nous ne sommes pas responsables des éventuelles erreurs.
+        </p>
+    </div>
+</body>
+</html>
